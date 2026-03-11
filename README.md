@@ -2,11 +2,6 @@
 
 > Liest österreichische Radiologie-Codes aus Excel, baut FHIR-Terminologie-Ressourcen und lädt sie auf einen lokalen HAPI FHIR Server hoch.
 
-![Python](https://img.shields.io/badge/Python-3.x-blue?logo=python)
-![FHIR](https://img.shields.io/badge/FHIR-R4-orange)
-![HAPI](https://img.shields.io/badge/HAPI%20FHIR-latest-green)
-![Docker](https://img.shields.io/badge/Docker-required-blue?logo=docker)
-
 ---
 
 ## 📋 Inhaltsverzeichnis
@@ -256,9 +251,9 @@ GET /fhir/CodeSystem/$lookup
 ### Voraussetzungen
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-- Python 3.x
-- Pakete: `pip install pandas openpyxl requests`
-- `ELGA_APPC.xlsx` und `ELGA_APPC_KUK.xlsx` im selben Ordner wie die Skripte
+- **Python 3.12** (getestet mit 3.12 – empfohlen)
+- Virtual environment (`.venv`) mit den Paketen: `pip install pandas openpyxl requests`
+- `ELGA_APPC.xlsx` und `ELGA_APPC_KUK.xlsx` im Ordner `data/`
 
 ### 1. HAPI FHIR Server starten
 
@@ -282,22 +277,28 @@ Nach dem Start erreichbar unter:
 
 ### 2. Skripte ausführen
 
+> ⚠️ **Wichtig:** Skripte immer vom **Projektordner** `APPC_Code/` aus starten, nicht aus `src/` oder `tests/` – sonst findet Python den `data/` Ordner nicht.
+
 ```bash
 # Schritt 1: ELGA APPC hochladen
-python appc_.py
+python src/appc_.py
 
 # Schritt 2: KUK hochladen
-python appc_kuk.py
+python src/appc_kuk.py
+
+# Schritt 3: Tests ausführen
+python tests/test_appc_.py
+python tests/test_appc_kuk.py
 ```
 
-**Weitere Optionen (beide Skripte):**
+**Weitere Optionen (beide Upload-Skripte):**
 ```bash
-python appc_.py --test-only          # nur testen, nicht hochladen
-python appc_.py --excel andere.xlsx  # andere Excel-Datei
-python appc_.py --save-json          # FHIR JSON lokal speichern
+python src/appc_.py --test-only          # nur testen, nicht hochladen
+python src/appc_.py --excel data/andere.xlsx  # andere Excel-Datei
+python src/appc_.py --save-json          # FHIR JSON lokal speichern
 ```
 
-> ⚠️ **Wichtig:** Docker hat keinen persistenten Speicher. Nach jedem Docker-Neustart müssen **beide Skripte** erneut ausgeführt werden.
+> ⚠️ **Wichtig:** Docker hat keinen persistenten Speicher. Nach jedem Docker-Neustart müssen **beide Upload-Skripte** erneut ausgeführt werden.
 
 ---
 
@@ -335,10 +336,15 @@ python appc_.py --save-json          # FHIR JSON lokal speichern
 
 ```
 APPC_Code/
-├── appc_.py                # ELGA APPC Skript
-├── appc_kuk.py             # KUK Leistungs-Codes Skript
-├── ELGA_APPC.xlsx          # Quelldaten ELGA (nicht im Repo)
-├── ELGA_APPC_KUK.xlsx      # Quelldaten KUK (nicht im Repo)
+├── src/
+│   ├── appc_.py            # ELGA APPC Upload-Skript
+│   └── appc_kuk.py         # KUK Leistungs-Codes Upload-Skript
+├── tests/
+│   ├── test_appc_.py       # Tests für ELGA APPC
+│   └── test_appc_kuk.py    # Tests für KUK
+├── data/
+│   ├── ELGA_APPC.xlsx      # Quelldaten ELGA (nicht im Repo)
+│   └── ELGA_APPC_KUK.xlsx  # Quelldaten KUK (nicht im Repo)
 └── README.md               # Diese Dokumentation
 ```
 
