@@ -1,0 +1,34 @@
+@startuml
+
+skinparam sequenceArrowThickness 2
+skinparam roundcorner 10
+
+title ELGA APPC – Überblick
+
+actor "Entwickler" as Dev
+participant "Python Skript" as Script
+participant "ELGA_APPC.xlsx" as Excel
+participant "HAPI FHIR Server" as HAPI
+participant "KIS" as KIS
+
+Dev -> Script : Skript starten
+Script -> Excel : Excel einlesen
+Excel --> Script : ~1588 Codes
+
+Script -> Script : FHIR-Ressourcen bauen\n(CodeSystem, ValueSet, ConceptMap)
+
+Script -> HAPI : Ressourcen hochladen
+HAPI --> Script : OK ✓
+
+== Produktivbetrieb ==
+
+KIS -> HAPI : $validate-code – Ist 'US1AAUA' gültig?
+HAPI --> KIS : true ✓
+
+KIS -> HAPI : $translate – Welcher APPC-Code für 'US1AAUA'?
+HAPI --> KIS : '4.0.0.1-1'
+
+KIS -> HAPI : $lookup – Was bedeutet 'US1AAUA'?
+HAPI --> KIS : 'Ultraschall Abdomen'
+
+@enduml
